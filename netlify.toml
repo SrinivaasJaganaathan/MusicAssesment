@@ -1,0 +1,61 @@
+[build]
+  # No build command needed for static site
+  publish = "."
+
+[build.environment]
+  # Environment variables (if needed in future)
+  NODE_VERSION = "18"
+
+[[headers]]
+  # Apply security headers to all pages
+  for = "/*"
+  [headers.values]
+    # Security headers
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    
+    # Performance headers
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  # Special caching for HTML files
+  for = "*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[redirects]]
+  # Redirect any 404 to the main page (SPA behavior)
+  from = "/*"
+  to = "/index.html"
+  status = 404
+
+# Form handling (if you add contact forms later)
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = false
+  minify = true
+
+[build.processing.js]
+  bundle = false
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
+# Plugin configuration
+[[plugins]]
+  package = "netlify-plugin-lighthouse"
+  
+  [plugins.inputs.thresholds]
+    performance = 0.9
+    accessibility = 0.9
+    best-practices = 0.9
+    seo = 0.9
+
+# Edge functions (for future enhancements)
+[functions]
+  directory = "netlify/functions"
